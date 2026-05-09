@@ -1,0 +1,1369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="On The Tee">
+<meta name="theme-color" content="#0e1410">
+<title>On The Tee — Golf Training</title>
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' fill='%230e1410'/%3E%3Ccircle cx='90' cy='90' r='42' fill='none' stroke='%236b9777' stroke-width='6'/%3E%3Ccircle cx='90' cy='90' r='8' fill='%236b9777'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=Fraunces:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0e1410;
+    --bg-translucent: rgba(14, 20, 16, 0.85);
+    --surface: #1a2520;
+    --surface-done: #16231c;
+    --border: #2a3832;
+    --ink: #f4ede1;
+    --cream: #f4ede1;
+    --muted: #8a9a90;
+    --accent: #6b9777;
+    --accent-deep: #4a6b54;
+    --accent-glow: rgba(107, 151, 119, 0.2);
+    --font-display: 'Bricolage Grotesque', -apple-system, sans-serif;
+    --font-body: 'Fraunces', Georgia, serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    background: var(--bg);
+    color: var(--cream);
+    font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    min-height: 100vh;
+    overscroll-behavior-y: none;
+  }
+
+  body {
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background-image: radial-gradient(circle at 20% 30%, rgba(107, 151, 119, 0.04) 0%, transparent 50%),
+                      radial-gradient(circle at 80% 70%, rgba(107, 151, 119, 0.03) 0%, transparent 50%);
+    z-index: 0;
+  }
+
+  .app {
+    max-width: 28rem;
+    margin: 0 auto;
+    padding: 1.5rem 1.25rem 5rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  button {
+    background: none;
+    border: none;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  a { color: inherit; text-decoration: none; }
+
+  .display { font-family: var(--font-display); }
+  .body-font { font-family: var(--font-body); }
+
+  /* HOME */
+  .header-eyebrow {
+    font-family: var(--font-display);
+    font-size: 0.625rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.25rem;
+  }
+
+  .header-title {
+    font-family: var(--font-display);
+    font-size: 2.25rem;
+    font-weight: 800;
+    letter-spacing: -0.025em;
+    line-height: 0.95;
+    color: var(--ink);
+  }
+
+  .header-date {
+    font-family: var(--font-body);
+    font-style: italic;
+    color: var(--muted);
+    font-size: 0.875rem;
+    margin-top: 0.5rem;
+  }
+
+  /* Streak card */
+  .streak-card {
+    margin: 1.75rem 0 1.5rem;
+    padding: 1.25rem;
+    border-radius: 1rem;
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent-deep) 100%);
+    box-shadow: 0 6px 24px -8px rgba(74, 124, 89, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: transform 0.15s;
+  }
+  .streak-card:active { transform: scale(0.99); }
+
+  .streak-label {
+    font-family: var(--font-display);
+    font-size: 0.625rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    opacity: 0.8;
+    color: var(--cream);
+  }
+
+  .streak-num {
+    font-family: var(--font-display);
+    font-size: 3rem;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--cream);
+    margin-top: 0.25rem;
+  }
+
+  .streak-unit {
+    font-size: 0.875rem;
+    opacity: 0.9;
+    color: var(--cream);
+    margin-left: 0.5rem;
+  }
+
+  .streak-arrow {
+    font-family: var(--font-display);
+    font-size: 0.625rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    opacity: 0.7;
+    color: var(--cream);
+    margin-top: 0.5rem;
+    text-align: right;
+  }
+
+  /* Mode toggle */
+  .mode-toggle {
+    display: flex;
+    background: var(--surface);
+    border-radius: 999px;
+    padding: 0.25rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .mode-btn {
+    flex: 1;
+    padding: 0.625rem 0;
+    border-radius: 999px;
+    font-family: var(--font-display);
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: var(--muted);
+    transition: all 0.2s;
+  }
+
+  .mode-btn.active {
+    background: var(--ink);
+    color: #1a2520;
+  }
+
+  /* Day cards */
+  .day-list { display: flex; flex-direction: column; gap: 0.75rem; }
+
+  .day-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.25rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 1rem;
+    text-align: left;
+    width: 100%;
+    transition: transform 0.15s;
+  }
+  .day-card:active { transform: scale(0.985); }
+
+  .day-card.complete {
+    border-color: var(--accent);
+    box-shadow: inset 0 0 0 2px var(--accent-glow);
+  }
+
+  .day-card-content { flex: 1; min-width: 0; }
+
+  .day-card-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .day-card-label {
+    font-family: var(--font-display);
+    font-size: 0.625rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .day-card-badge {
+    font-size: 0.5625rem;
+    letter-spacing: 0.15em;
+    padding: 0.125rem 0.5rem;
+    border-radius: 999px;
+    background: var(--accent);
+    color: var(--cream);
+    font-family: var(--font-display);
+  }
+
+  .day-card-focus {
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--ink);
+    letter-spacing: -0.015em;
+  }
+
+  .day-card-progress {
+    margin-top: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .progress-bar {
+    flex: 1;
+    height: 4px;
+    border-radius: 999px;
+    background: var(--bg);
+    overflow: hidden;
+  }
+
+  .progress-bar-inner {
+    height: 100%;
+    background: var(--ink);
+    transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .day-card.complete .progress-bar-inner { background: var(--accent); }
+
+  .progress-count {
+    font-size: 0.6875rem;
+    font-variant-numeric: tabular-nums;
+    color: var(--muted);
+  }
+
+  .chevron-right {
+    margin-left: 0.75rem;
+    opacity: 0.4;
+    color: var(--ink);
+  }
+
+  /* Footer */
+  .footer {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .footer-link {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    font-size: 0.75rem;
+    color: var(--muted);
+  }
+
+  details { margin-top: 1rem; }
+
+  summary {
+    cursor: pointer;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    font-family: var(--font-display);
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  summary::-webkit-details-marker { display: none; }
+
+  details[open] .legend-chevron { transform: rotate(90deg); }
+  .legend-chevron { transition: transform 0.2s; }
+
+  .legend-grid {
+    margin-top: 0.75rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.375rem 0.75rem;
+  }
+
+  .legend-item { display: flex; gap: 0.5rem; font-size: 0.6875rem; }
+  .legend-abbr { font-weight: 700; color: var(--ink); width: 1.5rem; }
+  .legend-full { color: var(--muted); }
+
+  .equipment {
+    margin-top: 0.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+  }
+
+  .equipment a {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    font-size: 0.6875rem;
+    color: var(--accent);
+  }
+
+  /* DAY VIEW */
+  .day-header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: var(--bg-translucent);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 1rem 1.25rem 0.75rem;
+    margin: -1.5rem -1.25rem 0;
+  }
+
+  .day-header-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.75rem;
+  }
+
+  .back-btn, .reset-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-family: var(--font-display);
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .reset-btn {
+    padding: 0.375rem 0.75rem;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    font-size: 0.625rem;
+    gap: 0.375rem;
+  }
+
+  .day-title-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+  }
+
+  .day-title {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 800;
+    letter-spacing: -0.025em;
+    color: var(--ink);
+  }
+
+  .day-progress-text {
+    font-size: 0.875rem;
+    font-variant-numeric: tabular-nums;
+    color: var(--muted);
+  }
+
+  .day-progress-bar {
+    margin-top: 0.5rem;
+    height: 4px;
+    border-radius: 999px;
+    background: var(--surface);
+    overflow: hidden;
+  }
+
+  .sections { padding: 1.25rem 0 3rem; display: flex; flex-direction: column; gap: 1.75rem; }
+
+  .section-title {
+    font-family: var(--font-display);
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--ink);
+  }
+
+  .section-sub {
+    font-size: 0.625rem;
+    color: var(--muted);
+    margin-top: 0.125rem;
+  }
+
+  .section-note {
+    font-style: italic;
+    font-size: 0.75rem;
+    color: var(--muted);
+    background: var(--surface);
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    border-left: 2px solid var(--accent);
+    margin: 0.75rem 0;
+  }
+
+  .exercise-list {
+    margin-top: 0.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  /* Exercise card */
+  .exercise {
+    display: flex;
+    gap: 0.75rem;
+    padding: 1rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 0.75rem;
+    transition: all 0.2s;
+  }
+
+  .exercise.done {
+    background: var(--surface-done);
+    border-color: var(--accent);
+    opacity: 0.85;
+  }
+
+  .check {
+    flex-shrink: 0;
+    width: 1.75rem;
+    height: 1.75rem;
+    border-radius: 999px;
+    border: 2px solid var(--muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+  }
+  .check:active { transform: scale(0.9); }
+  .exercise.done .check { background: var(--accent); border-color: var(--accent); }
+
+  .check-icon {
+    width: 14px;
+    height: 14px;
+    color: var(--cream);
+    stroke-width: 3;
+    opacity: 0;
+  }
+  .exercise.done .check-icon { opacity: 1; }
+
+  .ex-content { flex: 1; min-width: 0; }
+
+  .ex-head {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .ex-order {
+    font-size: 0.625rem;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.05em;
+    padding: 0.125rem 0.375rem;
+    border-radius: 0.25rem;
+    background: var(--bg);
+    color: var(--muted);
+  }
+
+  .ex-name {
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 1rem;
+    line-height: 1.3;
+    color: var(--ink);
+  }
+
+  .exercise.done .ex-name {
+    text-decoration: line-through;
+    text-decoration-color: var(--muted);
+  }
+
+  .ex-stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 0.75rem;
+    margin-top: 0.375rem;
+  }
+
+  .stat {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.25rem;
+  }
+
+  .stat-label {
+    font-family: var(--font-display);
+    font-size: 0.5625rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .stat-value {
+    font-size: 0.75rem;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    color: var(--ink);
+  }
+
+  .ex-notes {
+    margin-top: 0.5rem;
+    font-size: 0.6875rem;
+    font-style: italic;
+    line-height: 1.5;
+    color: var(--muted);
+  }
+
+  .watch-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    margin-top: 0.625rem;
+    padding: 0.375rem 0.75rem;
+    border-radius: 999px;
+    background: var(--ink);
+    color: #1a2520;
+    font-family: var(--font-display);
+    font-size: 0.6875rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+
+  .play-icon { width: 11px; height: 11px; fill: currentColor; }
+
+  /* HISTORY */
+  .history-title {
+    font-family: var(--font-display);
+    font-size: 1.875rem;
+    font-weight: 800;
+    letter-spacing: -0.025em;
+    color: var(--ink);
+    margin-top: 1.25rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .history-sub {
+    font-style: italic;
+    font-size: 0.875rem;
+    color: var(--muted);
+    margin-bottom: 1.5rem;
+  }
+
+  .history-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+    margin-bottom: 1.75rem;
+  }
+
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 0.75rem;
+    padding: 1rem;
+  }
+
+  .stat-card-head {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--accent);
+    margin-bottom: 0.375rem;
+  }
+
+  .stat-card-label {
+    font-family: var(--font-display);
+    font-size: 0.625rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .stat-card-value {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    color: var(--ink);
+  }
+
+  .history-empty {
+    text-align: center;
+    padding: 3rem 0;
+    font-size: 0.875rem;
+    color: var(--muted);
+  }
+
+  .history-empty svg {
+    width: 32px;
+    height: 32px;
+    margin: 0 auto 0.75rem;
+    opacity: 0.4;
+    display: block;
+  }
+
+  .history-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .history-entry {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 0.75rem;
+    padding: 1rem;
+  }
+
+  .history-entry-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+  }
+
+  .history-entry-date {
+    font-family: var(--font-display);
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--ink);
+  }
+
+  .history-entry-today {
+    font-size: 0.625rem;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+  }
+
+  .history-entry-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    color: var(--ink);
+    padding: 0.25rem 0;
+  }
+
+  .history-entry-progress {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+<div id="app" class="app"></div>
+
+<script>
+// ============================================================
+// EXERCISE DATA — extracted from Jonathan_L__Golf.xlsx
+// ============================================================
+
+const PROGRAM = {
+  daily: {
+    title: "Daily Program",
+    subtitle: "4-day rotation",
+    days: [
+      {
+        id: "d1",
+        name: "Day 1",
+        focus: "Rotation Power",
+        sections: [
+          {
+            name: "Mobility / Soft Tissue",
+            sub: "Upper Body / Thoracic Spine / Posture",
+            exercises: [
+              { order: "1a", name: "Upper Thoracic Extension on FR", sets: "5", reps: "5–10", url: "https://youtu.be/oElRuVJRL-0", notes: "Start in middle region of back under both shoulder blades then work upwards" },
+              { order: "1b", name: "Quadruped Reach & Rotate", sets: "3", reps: "10", url: "https://youtu.be/V-ADUai7R84" },
+              { order: "1c", name: "1/2 Kneeling Open Books & Overhead Reach", sets: "2", reps: "10", url: "https://youtu.be/Bvhj-bnOIz4" },
+              { order: "1d", name: "1/2 Kneeling Windmills", sets: "2", reps: "5", url: "https://youtu.be/j21VMmqYXjc" },
+              { order: "1e", name: "Ankle Drivers", sets: "2", reps: "10–15 ea side", url: "https://youtu.be/r4tOlV372UI", notes: "Your left ankle was more limited than R" }
+            ]
+          },
+          {
+            name: "Lower Body",
+            exercises: [
+              { order: "2a", name: "PA Straight Leg Raise", sets: "3", reps: "10", lbs: "Blue band", url: "https://youtube.com/shorts/NwFrnqzyruE?feature=share", notes: "Pull elastic band across chest and hold; press 1 leg down into surface; raise opposite leg up" },
+              { order: "2b", name: "KB Hip Openers", sets: "3", reps: "10–15", lbs: "10#", url: "https://youtu.be/F8TQZ89dCQA", notes: "10–25# weight held beneath midline" },
+              { order: "2c", name: "Groin/Lower back flow", sets: "1–2", reps: "10–15", url: "https://youtu.be/mgxvhNGVIy0" }
+            ]
+          },
+          {
+            name: "Resistance Training — Tier 1",
+            exercises: [
+              { order: "3b", name: "Golfer's ER Hip Bridge", sets: "2/3", reps: "10", url: "https://youtu.be/PUoTeLBsQaM", notes: "\"lift and roll\"" },
+              { order: "3c", name: "Golfer's IR Hip Bridge", sets: "2/3", reps: "10", url: "https://youtu.be/jTm0U59MDG0", notes: "\"lift and roll\"" },
+              { order: "3d", name: "Glute Med Series", sets: "1 ea", reps: "25–50 (AMRAP)", lbs: "2/4# ankle weights", url: "https://youtu.be/riAEX1pBGMQ", notes: "As Many Reps As Possible; ideally using 2-4# ankle weights" },
+              { order: "3e", name: "Hip ADDuctor (groin)", sets: "2/3", reps: "15–20", url: "https://youtu.be/3r32Vvo1pwo" },
+              { order: "3f", name: "Clams", sets: "2", reps: "20", lbs: "Med band", url: "https://youtu.be/tcno0yxO_NM", notes: "Medium-resistance mini-band" }
+            ]
+          },
+          {
+            name: "Resistance Training — Tier 2",
+            exercises: [
+              { order: "3f", name: "Mini-band Toe Taps", sets: "3", reps: "10–15", lbs: "Med band", url: "https://youtu.be/pigbtUFi-sM" },
+              { order: "4a", name: "Mini-band Crab Walks", sets: "3", reps: "25\"", lbs: "Med band", url: "https://youtu.be/WgDUe1HHVZc" },
+              { order: "4b", name: "Mini-band Monster Walks", sets: "3", reps: "25\"", lbs: "Med band", url: "https://youtu.be/wjcnONsgNwk" }
+            ]
+          },
+          {
+            name: "Upper Body Resistance",
+            exercises: [
+              { order: "5a", name: "Banded Pull-Aparts", sets: "3", reps: "10", url: "https://youtu.be/0vIGCl3obr0" },
+              { order: "5b", name: "Banded Cheerleaders", sets: "3", reps: "10", url: "https://youtu.be/ROYjXwSLGmk" },
+              { order: "5d", name: "Seated Ankle Pumps", sets: "1", reps: "30", lbs: "Blue band", url: "https://youtu.be/7gx3UfMUXJM" },
+              { order: "5e", name: "Seated Ankle Pumps (heavy)", sets: "3", reps: "20", lbs: "Black band" }
+            ]
+          }
+        ]
+      },
+      {
+        id: "d2",
+        name: "Day 2",
+        focus: "Vertical Power",
+        sections: [
+          {
+            name: "Mobility / Soft Tissue",
+            sub: "Upper Body / Thoracic Spine / Posture",
+            exercises: [
+              { order: "1a", name: "Upper Thoracic Extension on FR", sets: "5", reps: "5–10", url: "https://youtu.be/oElRuVJRL-0" },
+              { order: "1b", name: "1/2 Kneeling Open Book and Sweeps", sets: "1", reps: "10–15 ea", url: "https://youtu.be/XpYEjLZL0CM" },
+              { order: "1c", name: "1/2 Kneeling Windmills", sets: "1", reps: "10–15 ea", url: "https://youtu.be/U5HmqBFnznU" }
+            ]
+          },
+          {
+            name: "Resistance Training",
+            exercises: [
+              { order: "3b", name: "Single Leg Hip Bridge", sets: "2/3", reps: "8", url: "https://youtu.be/t-3phjCEsg8" },
+              { order: "3c", name: "Golfer's IR Hip Bridge", sets: "2/3", reps: "10", url: "https://youtu.be/jTm0U59MDG0" },
+              { order: "3d", name: "Golfer's ER Hip Bridge", sets: "2/3", reps: "10", url: "https://youtu.be/PUoTeLBsQaM" }
+            ]
+          },
+          {
+            name: "Movement / Stability",
+            exercises: [
+              { order: "4a", name: "Mini-band Toe Taps", sets: "3", reps: "10–15", url: "https://youtu.be/pigbtUFi-sM" },
+              { order: "4b", name: "Crab Walk w/ Rotation", sets: "2 ea", reps: "10–15", url: "https://youtu.be/K027Y26K_1E", notes: "Step left – rotate right 10–15x; step right – rotate left 10–15x" },
+              { order: "4c", name: "Birddogs", sets: "3", reps: "10", url: "https://youtu.be/AgyYfM-_OdE", notes: "Keep back flat and level focusing on a tight core throughout the movements" }
+            ]
+          }
+        ]
+      },
+      {
+        id: "d3",
+        name: "Day 3",
+        focus: "Chop Power",
+        sections: [
+          {
+            name: "Notes",
+            note: "Day 3 detailed exercises pending from trainer. Use this slot to repeat Day 1 mobility + add chop-pattern work as guided.",
+            exercises: []
+          }
+        ]
+      },
+      {
+        id: "d4",
+        name: "Day 4",
+        focus: "Vertical Power",
+        sections: [
+          {
+            name: "Notes",
+            note: "Day 4 detailed exercises pending from trainer. Use Day 2 (Vertical Power) as a working template.",
+            exercises: []
+          }
+        ]
+      }
+    ]
+  },
+  trip: {
+    title: "Golf Trip",
+    subtitle: "On-the-road program",
+    days: [
+      {
+        id: "t1",
+        name: "Trip Day 1",
+        focus: "Rotation Power",
+        sections: [
+          {
+            name: "Mobility / Soft Tissue",
+            sub: "Upper Body / Thoracic Spine / Posture",
+            exercises: [
+              { order: "1a", name: "C/T Ext over FR", sets: "5", reps: "5–10", url: "https://youtu.be/OdE1EXaDSTA?si=jSuLD7i3vdPg6zb-", notes: "Start in middle region of back under both shoulder blades then work upwards" },
+              { order: "2a", name: "Side-Lying Open Book Series", sets: "1", reps: "10 ea", url: "https://youtu.be/Pjb-_tXD-gI?si=ohMu54AmH0F2jqi4" },
+              { order: "3a", name: "Quadruped Reach & Rot", sets: "2", reps: "10", url: "https://youtu.be/Lw17frd_mGo?si=KTH5CWIDwo9OBb47" }
+            ]
+          },
+          {
+            name: "Lower Body",
+            exercises: [
+              { order: "4a", name: "KB Hip Openers", sets: "3", reps: "10–15", lbs: "10#", url: "https://youtu.be/F8TQZ89dCQA", notes: "10–25# weight held beneath midline" },
+              { order: "5a", name: "Lower Back / Groin Flow", sets: "1–2", reps: "10–15", url: "https://youtu.be/gqDN5Vw01yM?si=e7LmiC1Bjcjpg8yA" },
+              { order: "6a", name: "Ankle Drivers", sets: "2", reps: "10 ea", url: "https://youtu.be/r4tOlV372UI?si=lM0QaggmaD5zLrgV" }
+            ]
+          },
+          {
+            name: "Resistance Training — Tier 1",
+            exercises: [
+              { order: "1a", name: "Glute Med(ius) Hip Series", reps: "20–30", lbs: "2/4# ankle wts", url: "https://youtu.be/H4-MlcSE9WE?si=qru0D0xMtv9M88F9", notes: "As Many Reps As Possible; ideally using 2-4# ankle weights" },
+              { order: "1b", name: "Side-lying Hip Add(uction) Series", reps: "15", url: "https://youtu.be/Bbj-3JYWhFw?si=vdJqHpL4WX2n2Jmw", notes: "2-4# ankle weights (same as previous hip exercise)" },
+              { order: "3d", name: "Side-lying Hip Clam", sets: "1", reps: "20", url: "https://youtu.be/evaQbPCFXEs?si=S3dry5NHqzhnKDUj", notes: "Medium-resistance mini-band" },
+              { order: "3e", name: "ER Hip Bridge", sets: "2", reps: "10", url: "https://youtu.be/hxI8nOWX46Y?si=aGn1skTTrWuHtUAp", notes: "\"lift & roll\"" },
+              { order: "3f", name: "IR Hip Bridge", sets: "2", reps: "10", url: "https://youtu.be/zHBpgFUzyvk?si=hpYpTPVaWuZP_XVJ", notes: "\"lift & roll\"" }
+            ]
+          },
+          {
+            name: "Resistance Training — Tier 2",
+            exercises: [
+              { order: "3f", name: "Hip Toe Taps", sets: "2", reps: "10", url: "https://youtu.be/tV__nYpXgM4?si=hvKT3cS7MAtFXNRP", notes: "medium-resistance band" },
+              { order: "4a", name: "Lateral Walk w/ Rotation", sets: "2", reps: "10", url: "https://youtu.be/Mqb-AT2GHF0?si=noSldzNux0chgkyB", notes: "medium-resistance band + golf club" },
+              { order: "4b", name: "Dynamic Hip Step-through", sets: "1", reps: "10", url: "https://youtu.be/qAWiL396ss4?si=aexGD5gpAJknSwAx" }
+            ]
+          },
+          {
+            name: "Upper Body",
+            exercises: [
+              { order: "1a", name: "Tall Kneeling Halos", sets: "2", reps: "5", lbs: "15-20#", url: "https://youtu.be/k3tNLRxcKpc?si=MCb1UWUgJF_bfdp2", notes: "prefer use of Kettle bell; counter clockwise + clockwise" },
+              { order: "2a", name: "Square Stance Chop", sets: "2/3", reps: "8", url: "https://youtu.be/aj5_Ou99nx4?si=8OgZlpUK3Ub_q-S4" }
+            ]
+          },
+          {
+            name: "Core",
+            exercises: [
+              { order: "1a", name: "Birddogs", sets: "2", reps: "8", url: "https://youtu.be/ybAj1wB0O50?si=-FyZeDX9l3OiR8UI" }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+};
+
+const EQUIPMENT = [
+  { name: "Ankle weights (2-4 lb)", url: "https://www.elgindivision.com/elgin-long-strap-wrist-and-ankle-cuff-weights/" },
+  { name: "Mini-band (medium)", url: "https://www.amazon.com/dp/B09KM33N1C" }
+];
+
+const TRAINER_PHONE = "(702) 819-9519";
+
+const LEGEND = [
+  { abbr: "FR", full: "Foam Roll" },
+  { abbr: "OH", full: "Overhead" },
+  { abbr: "SA", full: "Single Arm" },
+  { abbr: "SL", full: "Single Leg" },
+  { abbr: "ER", full: "External Rotation" },
+  { abbr: "IR", full: "Internal Rotation" },
+  { abbr: "DL", full: "Double Leg" },
+  { abbr: "BW", full: "Body weight" }
+];
+
+// ============================================================
+// ICONS (inline SVG)
+// ============================================================
+
+const ICONS = {
+  flame: '<svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>',
+  trophy: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>',
+  flameSmall: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>',
+  chevronRight: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>',
+  chevronRightSm: '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="legend-chevron"><path d="m9 18 6-6-6-6"/></svg>',
+  chevronLeft: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>',
+  check: '<svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>',
+  checkSmall: '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>',
+  rotate: '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>',
+  play: '<svg class="play-icon" viewBox="0 0 24 24"><polygon points="6 3 20 12 6 21 6 3"/></svg>',
+  phone: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>',
+  external: '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>',
+  calendar: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4"/><path d="M8 2v4"/><path d="M3 10h18"/></svg>'
+};
+
+// ============================================================
+// STORAGE (localStorage)
+// ============================================================
+
+function todayKey() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+}
+
+function formatDateLabel(dateStr) {
+  const [y, m, d] = dateStr.split("-").map(Number);
+  const dt = new Date(y, m - 1, d);
+  return dt.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" });
+}
+
+function loadProgress() {
+  try {
+    const data = localStorage.getItem(`progress:${todayKey()}`);
+    return data ? JSON.parse(data) : {};
+  } catch { return {}; }
+}
+
+function saveProgress(progress) {
+  try {
+    localStorage.setItem(`progress:${todayKey()}`, JSON.stringify(progress));
+  } catch (e) { console.error(e); }
+}
+
+function loadHistory() {
+  try {
+    const data = localStorage.getItem("history:summary");
+    return data ? JSON.parse(data) : {};
+  } catch { return {}; }
+}
+
+function saveHistory(history) {
+  try {
+    localStorage.setItem("history:summary", JSON.stringify(history));
+  } catch (e) { console.error(e); }
+}
+
+function loadMode() {
+  try {
+    return localStorage.getItem("mode") || "daily";
+  } catch { return "daily"; }
+}
+
+function saveMode(mode) {
+  try { localStorage.setItem("mode", mode); } catch {}
+}
+
+// ============================================================
+// STATE
+// ============================================================
+
+const state = {
+  view: "home",
+  mode: loadMode(),
+  activeDayId: null,
+  completed: loadProgress(),
+  history: loadHistory()
+};
+
+function findDay(dayId) {
+  for (const m of ["daily", "trip"]) {
+    const d = PROGRAM[m].days.find(x => x.id === dayId);
+    if (d) return d;
+  }
+  return null;
+}
+
+function countExercises(day) {
+  return day.sections.reduce((acc, s) => acc + (s.exercises?.length || 0), 0);
+}
+
+function dayProgress(day) {
+  const map = state.completed[day.id] || {};
+  const total = countExercises(day);
+  const done = Object.values(map).filter(Boolean).length;
+  return { done, total, pct: total === 0 ? 0 : Math.round((done / total) * 100) };
+}
+
+function computeStreak() {
+  let count = 0;
+  const d = new Date();
+  while (true) {
+    const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+    const day = state.history[key];
+    const anyComplete = day && Object.values(day).some(v => v.total > 0 && v.done >= v.total);
+    if (anyComplete) {
+      count++;
+      d.setDate(d.getDate() - 1);
+    } else {
+      if (key === todayKey() && count === 0) {
+        d.setDate(d.getDate() - 1);
+        continue;
+      }
+      break;
+    }
+  }
+  return count;
+}
+
+function updateHistorySummary() {
+  const today = todayKey();
+  const summary = {};
+  Object.entries(state.completed).forEach(([dayId, exMap]) => {
+    const day = findDay(dayId);
+    if (!day) return;
+    const total = countExercises(day);
+    const done = Object.values(exMap).filter(Boolean).length;
+    summary[dayId] = { done, total };
+  });
+  state.history = { ...state.history, [today]: summary };
+  saveHistory(state.history);
+}
+
+function toggleExercise(dayId, exKey) {
+  const dayMap = { ...(state.completed[dayId] || {}) };
+  dayMap[exKey] = !dayMap[exKey];
+  state.completed = { ...state.completed, [dayId]: dayMap };
+  saveProgress(state.completed);
+  updateHistorySummary();
+  render();
+}
+
+function resetDay(dayId) {
+  const next = { ...state.completed };
+  delete next[dayId];
+  state.completed = next;
+  saveProgress(state.completed);
+  updateHistorySummary();
+  render();
+}
+
+function setMode(m) {
+  state.mode = m;
+  saveMode(m);
+  render();
+}
+
+function openDay(id) {
+  state.activeDayId = id;
+  state.view = "day";
+  window.scrollTo(0, 0);
+  render();
+}
+
+function back() {
+  state.view = "home";
+  window.scrollTo(0, 0);
+  render();
+}
+
+function openHistory() {
+  state.view = "history";
+  window.scrollTo(0, 0);
+  render();
+}
+
+// ============================================================
+// HTML helpers
+// ============================================================
+
+function escapeHTML(str) {
+  if (str == null) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
+// ============================================================
+// RENDER
+// ============================================================
+
+function render() {
+  const root = document.getElementById("app");
+  if (state.view === "home") {
+    root.innerHTML = renderHome();
+    bindHome();
+  } else if (state.view === "day") {
+    root.innerHTML = renderDay();
+    bindDay();
+  } else if (state.view === "history") {
+    root.innerHTML = renderHistory();
+    bindHistory();
+  }
+}
+
+function renderHome() {
+  const days = PROGRAM[state.mode].days;
+  const streak = computeStreak();
+  const date = new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" });
+
+  const dayCardsHTML = days.map(day => {
+    const p = dayProgress(day);
+    const isComplete = p.total > 0 && p.done === p.total;
+    return `
+      <button class="day-card ${isComplete ? 'complete' : ''}" data-day="${day.id}">
+        <div class="day-card-content">
+          <div class="day-card-meta">
+            <span class="day-card-label">${escapeHTML(day.name)}</span>
+            ${isComplete ? '<span class="day-card-badge">DONE</span>' : ''}
+          </div>
+          <div class="day-card-focus">${escapeHTML(day.focus)}</div>
+          <div class="day-card-progress">
+            <div class="progress-bar"><div class="progress-bar-inner" style="width: ${p.pct}%"></div></div>
+            <span class="progress-count">${p.done}/${p.total}</span>
+          </div>
+        </div>
+        <span class="chevron-right">${ICONS.chevronRight}</span>
+      </button>
+    `;
+  }).join("");
+
+  const legendHTML = LEGEND.map(l => `
+    <div class="legend-item">
+      <span class="legend-abbr">${l.abbr}</span>
+      <span class="legend-full">${escapeHTML(l.full)}</span>
+    </div>
+  `).join("");
+
+  const equipmentHTML = EQUIPMENT.map(e => `
+    <a href="${escapeHTML(e.url)}" target="_blank" rel="noopener noreferrer">
+      ${ICONS.external}
+      ${escapeHTML(e.name)}
+    </a>
+  `).join("");
+
+  return `
+    <div>
+      <div>
+        <div class="header-eyebrow">Jonathan L. · Golf Training</div>
+        <h1 class="header-title">On The Tee.</h1>
+        <div class="header-date">${escapeHTML(date)}</div>
+      </div>
+
+      <div class="streak-card" id="streakCard">
+        <div>
+          <div class="streak-label">Current Streak</div>
+          <div>
+            <span class="streak-num">${streak}</span>
+            <span class="streak-unit">${streak === 1 ? "day" : "days"}</span>
+          </div>
+        </div>
+        <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 0.5rem;">
+          <span style="color: var(--cream)">${ICONS.flame}</span>
+          <span class="streak-arrow">History →</span>
+        </div>
+      </div>
+
+      <div class="mode-toggle">
+        <button class="mode-btn ${state.mode === 'daily' ? 'active' : ''}" data-mode="daily">At Home</button>
+        <button class="mode-btn ${state.mode === 'trip' ? 'active' : ''}" data-mode="trip">Golf Trip</button>
+      </div>
+
+      <div class="day-list">${dayCardsHTML}</div>
+
+      <div class="footer">
+        <a href="tel:${TRAINER_PHONE.replace(/[^0-9]/g, '')}" class="footer-link">
+          ${ICONS.phone}
+          <span>Trainer: ${TRAINER_PHONE}</span>
+        </a>
+        <details>
+          <summary>
+            <span>Legend & Equipment</span>
+            ${ICONS.chevronRightSm}
+          </summary>
+          <div class="legend-grid">${legendHTML}</div>
+          <div class="equipment">${equipmentHTML}</div>
+        </details>
+      </div>
+    </div>
+  `;
+}
+
+function bindHome() {
+  document.getElementById("streakCard").addEventListener("click", openHistory);
+  document.querySelectorAll("[data-mode]").forEach(btn => {
+    btn.addEventListener("click", () => setMode(btn.dataset.mode));
+  });
+  document.querySelectorAll("[data-day]").forEach(btn => {
+    btn.addEventListener("click", () => openDay(btn.dataset.day));
+  });
+}
+
+function renderDay() {
+  const day = findDay(state.activeDayId);
+  if (!day) return "";
+  const p = dayProgress(day);
+  const completed = state.completed[day.id] || {};
+
+  const sectionsHTML = day.sections.map((section, sIdx) => {
+    const exercisesHTML = (section.exercises || []).map((ex, eIdx) => {
+      const exKey = `${sIdx}-${eIdx}-${ex.name}`;
+      const done = !!completed[exKey];
+      return `
+        <div class="exercise ${done ? 'done' : ''}">
+          <button class="check" data-exkey="${escapeHTML(exKey)}" aria-label="${done ? 'Mark incomplete' : 'Mark complete'}">${ICONS.check}</button>
+          <div class="ex-content">
+            <div class="ex-head">
+              <span class="ex-order">${escapeHTML(ex.order || '')}</span>
+              <h4 class="ex-name">${escapeHTML(ex.name)}</h4>
+            </div>
+            <div class="ex-stats">
+              ${ex.sets ? `<div class="stat"><span class="stat-label">Sets</span><span class="stat-value">${escapeHTML(ex.sets)}</span></div>` : ''}
+              ${ex.reps ? `<div class="stat"><span class="stat-label">Reps</span><span class="stat-value">${escapeHTML(ex.reps)}</span></div>` : ''}
+              ${ex.lbs ? `<div class="stat"><span class="stat-label">Load</span><span class="stat-value">${escapeHTML(ex.lbs)}</span></div>` : ''}
+            </div>
+            ${ex.notes ? `<div class="ex-notes">${escapeHTML(ex.notes)}</div>` : ''}
+            ${ex.url ? `<a href="${escapeHTML(ex.url)}" target="_blank" rel="noopener noreferrer" class="watch-btn">${ICONS.play} Watch</a>` : ''}
+          </div>
+        </div>
+      `;
+    }).join("");
+
+    return `
+      <div>
+        <div>
+          <h3 class="section-title">${escapeHTML(section.name)}</h3>
+          ${section.sub ? `<div class="section-sub">${escapeHTML(section.sub)}</div>` : ''}
+        </div>
+        ${section.note ? `<div class="section-note">${escapeHTML(section.note)}</div>` : ''}
+        ${exercisesHTML ? `<div class="exercise-list">${exercisesHTML}</div>` : ''}
+      </div>
+    `;
+  }).join("");
+
+  return `
+    <div>
+      <div class="day-header">
+        <div class="day-header-bar">
+          <button class="back-btn" id="backBtn">
+            ${ICONS.chevronLeft}
+            Back
+          </button>
+          <button class="reset-btn" id="resetBtn">
+            ${ICONS.rotate}
+            Reset
+          </button>
+        </div>
+        <div>
+          <div class="day-card-label" style="margin-bottom: 0.125rem;">${escapeHTML(day.name)}</div>
+          <div class="day-title-row">
+            <h2 class="day-title">${escapeHTML(day.focus)}</h2>
+            <span class="day-progress-text">${p.done}/${p.total}</span>
+          </div>
+          <div class="day-progress-bar">
+            <div class="progress-bar-inner" style="width: ${p.pct}%; background: ${p.pct === 100 ? 'var(--accent)' : 'var(--ink)'}"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sections">${sectionsHTML}</div>
+    </div>
+  `;
+}
+
+function bindDay() {
+  document.getElementById("backBtn").addEventListener("click", back);
+  document.getElementById("resetBtn").addEventListener("click", () => {
+    if (confirm("Reset all completed exercises for this day?")) {
+      resetDay(state.activeDayId);
+    }
+  });
+  document.querySelectorAll(".check[data-exkey]").forEach(btn => {
+    btn.addEventListener("click", () => toggleExercise(state.activeDayId, btn.dataset.exkey));
+  });
+}
+
+function renderHistory() {
+  const sortedDates = Object.keys(state.history).sort((a, b) => b.localeCompare(a));
+  const totalWorkouts = sortedDates.reduce((acc, date) => {
+    const day = state.history[date];
+    const completed = Object.values(day).filter(v => v.total > 0 && v.done >= v.total).length;
+    return acc + completed;
+  }, 0);
+  const streak = computeStreak();
+
+  const entriesHTML = sortedDates.map(date => {
+    const day = state.history[date];
+    const entries = Object.entries(day).filter(([_, v]) => v.total > 0 && v.done > 0);
+    if (entries.length === 0) return "";
+    const rowsHTML = entries.map(([dayId, v]) => {
+      const dayObj = findDay(dayId);
+      const isFull = v.done >= v.total;
+      return `
+        <div class="history-entry-row">
+          <span>${dayObj ? escapeHTML(`${dayObj.name} — ${dayObj.focus}`) : escapeHTML(dayId)}</span>
+          <div class="history-entry-progress">
+            ${isFull ? `<span style="color: var(--accent)">${ICONS.checkSmall}</span>` : ''}
+            <span style="color: ${isFull ? 'var(--accent)' : 'var(--muted)'}">${v.done}/${v.total}</span>
+          </div>
+        </div>
+      `;
+    }).join("");
+    return `
+      <div class="history-entry">
+        <div class="history-entry-head">
+          <span class="history-entry-date">${escapeHTML(formatDateLabel(date))}</span>
+          <span class="history-entry-today">${date === todayKey() ? "TODAY" : ""}</span>
+        </div>
+        <div>${rowsHTML}</div>
+      </div>
+    `;
+  }).join("");
+
+  const hasEntries = sortedDates.some(d => {
+    return Object.values(state.history[d]).some(v => v.total > 0 && v.done > 0);
+  });
+
+  return `
+    <div>
+      <button class="back-btn" id="backBtn" style="margin-bottom: 1.25rem;">
+        ${ICONS.chevronLeft}
+        Back
+      </button>
+      <h2 class="history-title">History</h2>
+      <div class="history-sub">Every rep counts.</div>
+      <div class="history-stats">
+        <div class="stat-card">
+          <div class="stat-card-head">
+            ${ICONS.flameSmall}
+            <span class="stat-card-label">Streak</span>
+          </div>
+          <div class="stat-card-value">${streak} ${streak === 1 ? "day" : "days"}</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-head">
+            ${ICONS.trophy}
+            <span class="stat-card-label">Workouts</span>
+          </div>
+          <div class="stat-card-value">${totalWorkouts}</div>
+        </div>
+      </div>
+      ${hasEntries ? `<div class="history-list">${entriesHTML}</div>` : `
+        <div class="history-empty">
+          ${ICONS.calendar}
+          No history yet. Get to work.
+        </div>
+      `}
+    </div>
+  `;
+}
+
+function bindHistory() {
+  document.getElementById("backBtn").addEventListener("click", back);
+}
+
+// Initial render
+render();
+</script>
+</body>
+</html>
